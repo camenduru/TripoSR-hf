@@ -114,5 +114,5 @@ with gr.Blocks() as demo:
         outputs=[output_model],
     )
 
-demo.queue(max_size=1)
+demo.queue(max_size=10)
 demo.launch()
