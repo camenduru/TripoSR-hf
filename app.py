@@ -35,7 +35,7 @@ def check_input_image(input_image):
         raise gr.Error("No image uploaded!")
 
 
-def preprocess(image_path, do_remove_background, foreground_ratio):
+def preprocess(input_image, do_remove_background, foreground_ratio):
     def fill_background(image):
         image = np.array(image).astype(np.float32) / 255.0
         image = image[:, :, :3] * image[:, :, 3:4] + (1 - image[:, :, 3:4]) * 0.5
@@ -43,11 +43,12 @@ def preprocess(image_path, do_remove_background, foreground_ratio):
         return image
 
     if do_remove_background:
-        image = remove_background(Image.open(image_path), rembg_session)
+        image = input_image.convert("RGB")
+        image = remove_background(image, rembg_session)
         image = resize_foreground(image, foreground_ratio)
         image = fill_background(image)
     else:
-        image = Image.open(image_path)
+        image = input_image
         if image.mode == "RGBA":
             image = fill_background(image)
     return image
@@ -74,8 +75,9 @@ with gr.Blocks() as demo:
             with gr.Row():
                 input_image = gr.Image(
                     label="Input Image",
+                    image_mode="RGBA",
                     sources="upload",
-                    type="filepath",
+                    type="pil",
                     elem_id="content_image",
                 )
                 processed_image = gr.Image(label="Processed Image", interactive=False)
