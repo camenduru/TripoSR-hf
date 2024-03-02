@@ -12,6 +12,8 @@ from PIL import Image
 from tsr.system import TSR
 from tsr.utils import remove_background, resize_foreground, to_gradio_3d_orientation
 
+HF_TOKEN = os.getenv("HF_TOKEN")
+
 if torch.cuda.is_available():
     device = "cuda:0"
 else:
@@ -21,6 +23,7 @@ model = TSR.from_pretrained(
     "stabilityai/TripoSR",
     config_name="config.yaml",
     weight_name="model.ckpt",
+    token=HF_TOKEN
 )
 model.to(device)
 
