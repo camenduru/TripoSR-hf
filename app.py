@@ -25,6 +25,7 @@ model = TSR.from_pretrained(
     weight_name="model.ckpt",
     token=HF_TOKEN
 )
+model.renderer.set_chunk_size(131072)
 model.to(device)
 
 rembg_session = rembg.new_session()
