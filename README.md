@@ -1,10 +1,10 @@
 ---
 title: TripoSR
-emoji: 🏃
+emoji: 🐳
 colorFrom: gray
 colorTo: red
-sdk: gradio
-sdk_version: 4.19.2
+sdk: docker
+# sdk_version: 4.19.2
 app_file: app.py
 pinned: false
 license: mit
