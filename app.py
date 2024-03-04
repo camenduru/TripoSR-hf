@@ -8,11 +8,54 @@ import numpy as np
 import rembg
 import torch
 from PIL import Image
+from functools import partial
 
 from tsr.system import TSR
 from tsr.utils import remove_background, resize_foreground, to_gradio_3d_orientation
 
 HF_TOKEN = os.getenv("HF_TOKEN")
+
+HEADER = """
+# TripoSR Demo
+<table>
+<tr>
+<td style="text-align: center;">
+<a href="https://stability.ai">
+<img src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/6c9c4c25-5410-4547-bc26-dc621cdacb25/Stability+AI+logo.png" width="200" height="40" />
+</a>
+</td>
+<td style="border-left: 1px solid #000; width: 1px;"></td>
+<td style="text-align: center;">
+<a href="https://www.tripo3d.ai">
+<img src="https://www.tripo3d.ai/logo.png" width="170" height="40" />
+</a>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td style="text-align: center;">
+<a href="https://huggingface.co/stabilityai/TripoSR"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model_Card-Huggingface-orange"></a>
+</td>
+<td style="border-left: 1px solid #000; width: 1px;"></td>
+<td style="text-align: center;">
+<a href="https://github.com/VAST-AI-Research/TripoSR"><img src="logos/github-mark-white.png" height="20"></a>
+</td>
+<td style="border-left: 1px solid #000; width: 1px;"></td>
+<td style="text-align: left;">
+<a href="https://github.com/VAST-AI-Research/TripoSR"><img src="https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg" height="20"></a>
+</td>
+</tr>
+</table>
+
+**TripoSR** is a state-of-the-art open-source model for **fast** feedforward 3D reconstruction from a single image, developed in collaboration between [Tripo AI](https://www.tripo3d.ai/) and [Stability AI](https://stability.ai/).
+
+**Tips:**
+1. If you find the result is unsatisfied, please try to change the foreground ratio. It might improve the results.
+2. Please disable "Remove Background" option only if your input image is RGBA with transparent background, image contents are centered and occupy more than 70% of image width or height.
+"""
+
 
 if torch.cuda.is_available():
     device = "cuda:0"
@@ -63,14 +106,13 @@ def generate(image):
     mesh.export(mesh_path.name)
     return mesh_path.name
 
+def run_example(image_pil):
+    preprocessed = preprocess(image_pil, False, 0.9)
+    mesh_name = generate(preprocessed)
+    return preprocessed, mesh_name
 
 with gr.Blocks() as demo:
-    gr.Markdown(
-        """
-    ## TripoSR Demo
-    [TripoSR](https://github.com/VAST-AI-Research/TripoSR) is a state-of-the-art open-source model for **fast** feedforward 3D reconstruction from a single image, collaboratively developed by [Tripo AI](https://www.tripo3d.ai/) and [Stability AI](https://stability.ai/).
-    """
-    )
+    gr.Markdown(HEADER)
     with gr.Row(variant="panel"):
         with gr.Column():
             with gr.Row():
@@ -107,6 +149,18 @@ with gr.Blocks() as demo:
                 Note: The model shown here will be flipped due to some visualization issues. Please download to get the correct result.
                 """
                 )
+    with gr.Row(variant="panel"):
+        gr.Examples(
+            examples=[
+                os.path.join("examples", img_name) for img_name in sorted(os.listdir("examples"))
+            ],
+            inputs=[input_image],
+            outputs=[processed_image, output_model],
+            cache_examples=True,
+            fn=partial(run_example),
+            label="Examples",
+            examples_per_page=20
+        )
     submit.click(fn=check_input_image, inputs=[input_image]).success(
         fn=preprocess,
         inputs=[input_image, do_remove_background, foreground_ratio],
