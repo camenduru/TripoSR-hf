@@ -17,14 +17,13 @@ HF_TOKEN = os.getenv("HF_TOKEN")
 
 HEADER = """
 # TripoSR Demo
-<table>
-<tr>
+<table bgcolor="#1E2432" cellspacing="0" cellpadding="0"  width="450">
+<tr style="height:50px;">
 <td style="text-align: center;">
 <a href="https://stability.ai">
 <img src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/6c9c4c25-5410-4547-bc26-dc621cdacb25/Stability+AI+logo.png" width="200" height="40" />
 </a>
 </td>
-<td style="border-left: 1px solid #000; width: 1px;"></td>
 <td style="text-align: center;">
 <a href="https://www.tripo3d.ai">
 <img src="https://www.tripo3d.ai/logo.png" width="170" height="40" />
@@ -32,19 +31,17 @@ HEADER = """
 </td>
 </tr>
 </table>
-
-<table>
-<tr>
+<table bgcolor="#1E2432" cellspacing="0" cellpadding="0"  width="450">
+<tr style="height:30px;">
 <td style="text-align: center;">
-<a href="https://huggingface.co/stabilityai/TripoSR"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model_Card-Huggingface-orange"></a>
+<a href="https://huggingface.co/stabilityai/TripoSR"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Model_Card-Huggingface-orange" height="20"></a>
 </td>
-<td style="border-left: 1px solid #000; width: 1px;"></td>
 <td style="text-align: center;">
-<a href="https://github.com/VAST-AI-Research/TripoSR"><img src="logos/github-mark-white.png" height="20"></a>
+<a href="https://github.com/VAST-AI-Research/TripoSR"><img src="https://postimage.me/images/2024/03/04/GitHub_Logo_White.png" width="100" height="20"></a>
 </td>
-<td style="border-left: 1px solid #000; width: 1px;"></td>
-<td style="text-align: left;">
-<a href="https://github.com/VAST-AI-Research/TripoSR"><img src="https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg" height="20"></a>
+<td style="text-align: center; color: white;">
+<!-- <a href="https://github.com/VAST-AI-Research/TripoSR"><img src="https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg" height="20"></a> -->
+<a href="http://your-url.com"><b>[Tech Report pdf]</b></a>
 </td>
 </tr>
 </table>
@@ -101,7 +98,7 @@ def preprocess(input_image, do_remove_background, foreground_ratio):
 def generate(image):
     scene_codes = model(image, device=device)
     mesh = model.extract_mesh(scene_codes)[0]
-    mesh.vertices = to_gradio_3d_orientation(mesh.vertices)
+    mesh = to_gradio_3d_orientation(mesh)
     mesh_path = tempfile.NamedTemporaryFile(suffix=".obj", delete=False)
     mesh.export(mesh_path.name)
     return mesh_path.name
@@ -143,11 +140,6 @@ with gr.Blocks() as demo:
                 output_model = gr.Model3D(
                     label="Output Model",
                     interactive=False,
-                )
-                gr.Markdown(
-                    """
-                Note: The model shown here will be flipped due to some visualization issues. Please download to get the correct result.
-                """
                 )
     with gr.Row(variant="panel"):
         gr.Examples(
