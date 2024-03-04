@@ -13,8 +13,6 @@ from functools import partial
 from tsr.system import TSR
 from tsr.utils import remove_background, resize_foreground, to_gradio_3d_orientation
 
-HF_TOKEN = os.getenv("HF_TOKEN")
-
 HEADER = """
 # TripoSR Demo
 <table bgcolor="#1E2432" cellspacing="0" cellpadding="0"  width="450">
@@ -60,12 +58,7 @@ if torch.cuda.is_available():
 else:
     device = "cpu"
 
-model = TSR.from_pretrained(
-    "stabilityai/TripoSR",
-    config_name="config.yaml",
-    weight_name="model.ckpt",
-    token=HF_TOKEN
-)
+model = TSR.from_pretrained("stabilityai/TripoSR", config_name="config.yaml", weight_name="model.ckpt")
 model.renderer.set_chunk_size(131072)
 model.to(device)
 
@@ -149,7 +142,7 @@ with gr.Blocks() as demo:
             ],
             inputs=[input_image],
             outputs=[processed_image, output_model],
-            cache_examples=True,
+            cache_examples=False,
             fn=partial(run_example),
             label="Examples",
             examples_per_page=20
