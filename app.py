@@ -41,7 +41,7 @@ HEADER = """
 </td>
 <td style="text-align: center; color: white;">
 <!-- <a href="https://github.com/VAST-AI-Research/TripoSR"><img src="https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg" height="20"></a> -->
-<a href="http://your-url.com"><b>[Tech Report pdf]</b></a>
+<a href="https://drive.google.com/file/d/1LWlZPT2aASi9jHiGVhDSr4YCTANoFW5t/view"><b>[Tech Report pdf]</b></a>
 </td>
 </tr>
 </table>
@@ -50,7 +50,8 @@ HEADER = """
 
 **Tips:**
 1. If you find the result is unsatisfied, please try to change the foreground ratio. It might improve the results.
-2. Please disable "Remove Background" option only if your input image is RGBA with transparent background, image contents are centered and occupy more than 70% of image width or height.
+2. You can disable "Remove Background" for the provided examples since they have been already preprocessed.
+3. Otherwise, please disable "Remove Background" option only if your input image is RGBA with transparent background, image contents are centered and occupy more than 70% of image width or height.
 """
 
 
